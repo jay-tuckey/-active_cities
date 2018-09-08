@@ -43,9 +43,9 @@ angular.module('starter.controllers', [])
 
 .controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
-    { title: 'Exercise', id: 'Exercise' },
-    { title: 'Socialise', id: 'Socialise' },
-    { title: 'Discover', id: 'Discover' }
+    { title: 'Exercise', id: 'Exercise', icon: 'trophy' },
+    { title: 'Socialise', id: 'Socialise', icon: 'beer' },
+    { title: 'Discover', id: 'Discover', icon: 'compass' }
   ];
 })
 
@@ -135,8 +135,6 @@ angular.module('starter.controllers', [])
       // if Socialise activity - pull the local parks
       if (socialiseActivity) {
         MapsService.getParkPolygons().then(function(parkPolygons) {
-          console.log(parkPolygons);
-          console.log(new Date().toISOString().split('T')[0]);
           var todaysPolygons = parkPolygons.data[new Date().toISOString().split('T')[0]];
           // Create polygon object
           _.each(todaysPolygons.geometry.coordinates, function(thePolygon) {
@@ -155,6 +153,7 @@ angular.module('starter.controllers', [])
               fillOpacity: 0.35,
               map: $scope.map
             });
+            // console.log(parkPolygon);
             // parkPolygon.setMap($scope.map);
           });
         });
