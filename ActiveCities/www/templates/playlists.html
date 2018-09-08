@@ -7,5 +7,10 @@
         {{playlist.title}}
       </ion-item>
     </ion-list>
+    <div class="padding text-center">
+      <p>Current weather forecast is:</p><p><strong>{{wxdata.data.long_forecast.long_forecast}}</strong></p>
+      <p>{{wxdata.data.mini_forecast.probability_of_precipitation}} chance of rain.</p>
+      <img src="img/{{wxdata.data.mini_forecast.forecast_icon_code}}.png">
+    </div>
   </ion-content>
 </ion-view>

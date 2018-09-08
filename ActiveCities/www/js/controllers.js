@@ -41,12 +41,18 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
+.controller('PlaylistsCtrl', function($scope, WeatherService) {
   $scope.playlists = [
     { title: 'Exercise', id: 'Exercise', icon: 'trophy' },
     { title: 'Socialise', id: 'Socialise', icon: 'beer' },
     { title: 'Discover', id: 'Discover', icon: 'compass' }
   ];
+
+  WeatherService.getWeatherFeed().then(function(wxdata) {
+    console.log(wxdata);
+    $scope.wxdata = wxdata;
+  });
+
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams, MapsService, $ionicLoading, $ionicPopup, $ionicHistory) {
