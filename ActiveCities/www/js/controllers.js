@@ -54,15 +54,19 @@ angular.module('starter.controllers', [])
 
   // Get the map POI types based on the activity
   var poiarray = [];
+  var exerciseActivity, socialiseActivity, discoverActivity = false;
   switch ($scope.playlistId) {
     case "Exercise":
       poiarray = ['bowling_alley','gym','park'];
+      exerciseActivity = true;
       break;
     case "Socialise":
       poiarray = ['bakery','cafe'];
+      socialiseActivity = true;
       break;
     case "Discover":
       poiarray = ['amusement_park','aquarium','art_gallery','library','museum','zoo'];
+      discoverActivity = true;
       break;
   }
 
@@ -99,9 +103,7 @@ angular.module('starter.controllers', [])
       _.each(poiarray, function(thepoi) {
         MapsService.getPlacesOfInterest(position, thepoi).then(function(pois) {
           if (pois.data.status != "ZERO_RESULTS") {
-            console.log(pois);
             _.each(pois.data.results, function(marker) {
-              console.log(marker.name);
               // Add the marker to the map
               var mapmarker = new google.maps.Marker({
                 position: marker.geometry.location,
@@ -129,6 +131,34 @@ angular.module('starter.controllers', [])
           }
         });
       });
+
+      // if Socialise activity - pull the local parks
+      if (socialiseActivity) {
+        MapsService.getParkPolygons().then(function(parkPolygons) {
+          console.log(parkPolygons);
+          console.log(new Date().toISOString().split('T')[0]);
+          var todaysPolygons = parkPolygons.data[new Date().toISOString().split('T')[0]];
+          // Create polygon object
+          _.each(todaysPolygons.geometry.coordinates, function(thePolygon) {
+            var polygonObject = [];
+            _.each(thePolygon[0], function(theCoords) {
+              polygonObject.push({lat: theCoords[0], lng: theCoords[1]});
+            });
+            console.log(polygonObject);
+            // Add it to the map
+            var parkPolygon = new google.maps.Polygon({
+              paths: polygonObject,
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.8,
+              strokeWeight: 2,
+              fillColor: '#FF0000',
+              fillOpacity: 0.35,
+              map: $scope.map
+            });
+            // parkPolygon.setMap($scope.map);
+          });
+        });
+      }
 
       // close the loading window
       $ionicLoading.hide();

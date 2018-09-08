@@ -4,6 +4,7 @@ angular.module('starter.services', [])
 .service('MapsService', function($http, $q, GEOCODING_API_KEY) {
     var baseGeoCodingURL = 'https://maps.googleapis.com/maps/api/geocode/json';
     var baseNearbyPlacesURL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+    var baseParkPolygonURL = 'https://jay-tuckey.github.io/active_cities/park_selections.json';
 
     _getGeoCoding = function(address) {
         return $http.get(baseGeoCodingURL + '?address=' + address + '&key=' + GEOCODING_API_KEY);
@@ -13,9 +14,14 @@ angular.module('starter.services', [])
         return $http.get(baseNearbyPlacesURL + '?location=' + position.coords.latitude + ',' + position.coords.longitude + '&radius=1500&type='+ poitype + '&key=' + GEOCODING_API_KEY)
     }
 
+    _getParkPolygons = function() {
+      return $http.get(baseParkPolygonURL);
+    }
+
     return {
         getGeoCoding: _getGeoCoding,
-        getPlacesOfInterest: _getPlacesOfInterest
+        getPlacesOfInterest: _getPlacesOfInterest,
+        getParkPolygons: _getParkPolygons
     };
 
 })
