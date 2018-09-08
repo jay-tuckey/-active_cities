@@ -111,6 +111,6 @@ except OSError:
 def bom_observations():
     outputdict = get_full_data()
 
-    return Response(json.dumps(outputdict), mimetype='application/json')
+    return Response(json.dumps(outputdict), mimetype='application/json', headers=[('Access-Control-Allow-Origin', '*')])
 
  
