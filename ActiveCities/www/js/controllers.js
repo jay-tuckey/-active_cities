@@ -52,6 +52,20 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams, MapsService, $ionicLoading, $ionicPopup, $ionicHistory) {
   $scope.playlistId = $stateParams.playlistId;
 
+  // Get the map POI types based on the activity
+  var poiarray = [];
+  switch ($scope.playlistId) {
+    case "Exercise":
+      poiarray = ['bowling_alley','gym','park'];
+      break;
+    case "Socialise":
+      poiarray = ['bakery','cafe'];
+      break;
+    case "Discover":
+      poiarray = ['amusement_park','aquarium','art_gallery','library','museum','zoo'];
+      break;
+  }
+
   $scope.$on('mapInitialized', function(event, map) {
     $scope.map = map;
   });
@@ -82,22 +96,24 @@ angular.module('starter.controllers', [])
       $scope.map.setCenter(pos);
 
       // pull nearby places of interest
-      MapsService.getExercisePlaces(position).then(function(pois) {
-        if (pois.data.status != "ZERO_RESULTS") {
-          _.each(pois.data.results, function(marker) {
-            console.log(marker.name);
-            var mapmarker = new google.maps.Marker({
-              position: marker.geometry.location,
-              map: $scope.map,
-              title: marker.name,
-              icon: {
-                url: marker.icon,
-                scaledSize: new google.maps.Size(20, 20)
-              }
+      _.each(poiarray, function(thepoi) {
+        MapsService.getPlacesOfInterest(position, thepoi).then(function(pois) {
+          if (pois.data.status != "ZERO_RESULTS") {
+            _.each(pois.data.results, function(marker) {
+              console.log(marker.name);
+              var mapmarker = new google.maps.Marker({
+                position: marker.geometry.location,
+                map: $scope.map,
+                title: marker.name,
+                icon: {
+                  url: marker.icon,
+                  scaledSize: new google.maps.Size(20, 20)
+                }
+              });
             });
-          });
-          console.log(pois);
-        }
+            console.log(pois);
+          }
+        });
       });
 
       // close the loading window
