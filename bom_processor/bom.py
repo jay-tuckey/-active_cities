@@ -65,16 +65,34 @@ def get_bom_mini_forecast() -> dict:
     return outdict
 
 
+def get_bom_long_forecast() -> dict:
+    xmltree = get_cached_result('ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10198.xml')
+
+    all_forecasts = [x for x in xmltree[1].getchildren() if x.attrib['description'] == "Darwin City and Outer Darwin"][0]
+    forecast = all_forecasts[0][0].text
+
+    outdict = dict()
+    outdict['long_forecast'] = forecast
+
+    return outdict
+
+
 def get_full_data() -> dict:
     obs = get_bom_obs()
     minis = get_bom_mini_forecast()
+    longf = get_bom_long_forecast()
 
     outdict = dict()
 
     outdict['observation'] = obs
     outdict['mini_forecast'] = minis
+    outdict['long_forecast'] = longf
 
     return outdict
+
+
+
+
 
 """Create and configure an instance of the Flask application."""
 app = Flask(__name__, instance_relative_config=True)
