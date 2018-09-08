@@ -99,6 +99,7 @@ angular.module('starter.controllers', [])
       _.each(poiarray, function(thepoi) {
         MapsService.getPlacesOfInterest(position, thepoi).then(function(pois) {
           if (pois.data.status != "ZERO_RESULTS") {
+            console.log(pois);
             _.each(pois.data.results, function(marker) {
               console.log(marker.name);
               // Add the marker to the map
@@ -112,16 +113,19 @@ angular.module('starter.controllers', [])
                 }
               });
               // Build the info window
+              var opening_hours = (marker.opening_hours === undefined || marker.opening_hours.open_now === undefined) ? "Possibly closed" : ((marker.opening_hours.open_now == true) ? "Open Now" : "Closed Now");
+              var rating = (marker.rating === undefined) ? "(unknown)" : marker.rating;
               var infowindow = new google.maps.InfoWindow({
                 content:  '<h5>' + marker.name + '</h5>' +
-                          '<em>' + marker.vicinity + '</em>'
+                          '<em>' + marker.vicinity + '</em><br/>' +
+                          '<span>Rating: <strong>' + rating + '</strong></span><br/>' +
+                          '<span>' + opening_hours + '</span>'
               });
               // Click handler for the marker
               mapmarker.addListener('click', function() {
                 infowindow.open($scope.map, mapmarker);
               });
             });
-            console.log(pois);
           }
         });
       });
