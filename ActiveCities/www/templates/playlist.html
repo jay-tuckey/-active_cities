@@ -4,24 +4,17 @@
       <div class="row">
         <div class="col">
           <div class="list">
-            <p class="padding-top text-center">How much did you want to spend?</p>
+            <p class="padding-top text-center">Activity pricing</p>
             <div class="button-bar bar-stable">
-              <a class="button button-small">Free</a>
-              <a class="button button-small">$</a>
-              <a class="button button-small">$$</a>
-              <a class="button button-small">$$$</a>
-            </div>
-            <p class="padding-top text-center">Do you prefer to be</p>
-            <div class="button-bar bar-stable">
-              <a class="button button-small">Indoors</a>
-              <a class="button button-small">Outdoors</a>
+              <a class="button button-small">All Activities</a>
+              <a class="button button-small">Free Only</a>
             </div>
           </div>
         </div>
       </div>
 
       <div style="height:100%;">
-        <map center="{{center_position.lat}},{{center_position.lng}}" zoom="15" style="height:60%;">
+        <map center="{{center_position.lat}},{{center_position.lng}}" zoom="15" style="height:75%;">
           <marker
               position="{{current_position.lat}},{{current_position.lng}}"
               title="You Are Here"

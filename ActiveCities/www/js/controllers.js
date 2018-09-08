@@ -101,6 +101,7 @@ angular.module('starter.controllers', [])
           if (pois.data.status != "ZERO_RESULTS") {
             _.each(pois.data.results, function(marker) {
               console.log(marker.name);
+              // Add the marker to the map
               var mapmarker = new google.maps.Marker({
                 position: marker.geometry.location,
                 map: $scope.map,
@@ -109,6 +110,15 @@ angular.module('starter.controllers', [])
                   url: marker.icon,
                   scaledSize: new google.maps.Size(20, 20)
                 }
+              });
+              // Build the info window
+              var infowindow = new google.maps.InfoWindow({
+                content:  '<h5>' + marker.name + '</h5>' +
+                          '<em>' + marker.vicinity + '</em>'
+              });
+              // Click handler for the marker
+              mapmarker.addListener('click', function() {
+                infowindow.open($scope.map, mapmarker);
               });
             });
             console.log(pois);
