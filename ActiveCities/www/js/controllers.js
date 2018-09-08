@@ -80,6 +80,27 @@ angular.module('starter.controllers', [])
       $scope.center_position = { lat: position.coords.latitude, lng: position.coords.longitude };
       $scope.my_location = position.coords.latitude + ", " + position.coords.longitude;
       $scope.map.setCenter(pos);
+
+      // pull nearby places of interest
+      MapsService.getExercisePlaces(position).then(function(pois) {
+        if (pois.data.status != "ZERO_RESULTS") {
+          _.each(pois.data.results, function(marker) {
+            console.log(marker.name);
+            var mapmarker = new google.maps.Marker({
+              position: marker.geometry.location,
+              map: $scope.map,
+              title: marker.name,
+              icon: {
+                url: marker.icon,
+                scaledSize: new google.maps.Size(20, 20)
+              }
+            });
+          });
+          console.log(pois);
+        }
+      });
+
+      // close the loading window
       $ionicLoading.hide();
   }, function(err) {
       // error
