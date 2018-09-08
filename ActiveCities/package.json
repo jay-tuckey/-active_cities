@@ -1,0 +1,17 @@
+{
+  "name": "ActiveCities",
+  "version": "0.0.1",
+  "description": "Active Cities GovHack Project",
+  "devDependencies": {
+    "@ionic/v1-toolkit": "^1.0.0",
+    "gulp": "^3.5.6",
+    "gulp-clean-css": "^3.7.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-sass": "^3.1.0"
+  },
+  "dependencies": {
+    "@ionic/pro": "2.0.3",
+    "ngmap": "^1.18.4",
+    "underscore": "^1.9.1"
+  }
+}

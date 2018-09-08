@@ -1,0 +1,35 @@
+<ion-view view-title="{{ playlistId }}">
+  <ion-content class="padding">
+    <p class="padding-top text-center">How much did you want to spend?</p>
+    <div class="button-bar bar-stable">
+      <a class="button button-small">Free</a>
+      <a class="button button-small">$</a>
+      <a class="button button-small">$$</a>
+      <a class="button button-small">$$$</a>
+    </div>
+    <p class="padding-top text-center">Do you prefer to be</p>
+    <div class="button-bar bar-stable">
+      <a class="button button-small">Indoors</a>
+      <a class="button button-small">Outdoors</a>
+    </div>
+    <div data-tap-disabled="true">
+      <div class="row">
+        <map center="{{center_position.lat}},{{center_position.lng}}" zoom="15">
+          <marker
+              position="{{current_position.lat}},{{current_position.lng}}"
+              title="You Are Here"
+              visible="true">
+          </marker>
+          <info-window ng-show="!_.isEmpty(info_position)" id="1" position="{{info_position.lat}},{{info_position.lng}}" visible="true">
+            <div ng-non-bindable="">
+              <img ng-show="!_.isEmpty(company.logo_link)" ng-src="{{company.logo_link}}" height="40"></img><br />
+              <b>{{ company.name }}</b><br />
+              {{ company.street_address_1 }} <br />
+              {{ company.street_suburb }} <br />
+            </div>
+          </info-window>
+        </map>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
