@@ -49,6 +49,41 @@ angular.module('starter.controllers', [])
   ];
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+.controller('PlaylistCtrl', function($scope, $stateParams, MapsService, $ionicLoading, $ionicPopup, $ionicHistory) {
   $scope.playlistId = $stateParams.playlistId;
+
+  $scope.$on('mapInitialized', function(event, map) {
+    $scope.map = map;
+  });
+
+  // Setup the loader
+  $ionicLoading.show({
+      template: 'Loading Map...',
+      content: 'Loading',
+      animation: 'fade-in',
+      showBackdrop: true,
+      maxWidth: 200,
+      showDelay: 0
+  });
+
+  $scope.positions = [];
+
+  $ionicLoading.show({
+      template: 'Loading...'
+  });
+
+  // with this function you can get the user’s current position
+  // we use this plugin: https://github.com/apache/cordova-plugin-geolocation/
+  navigator.geolocation.getCurrentPosition(function(position) {
+      var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      $scope.current_position = { lat: position.coords.latitude, lng: position.coords.longitude };
+      $scope.center_position = { lat: position.coords.latitude, lng: position.coords.longitude };
+      $scope.my_location = position.coords.latitude + ", " + position.coords.longitude;
+      $scope.map.setCenter(pos);
+      $ionicLoading.hide();
+  }, function(err) {
+      // error
+      $ionicLoading.hide();
+  });
+
 });
