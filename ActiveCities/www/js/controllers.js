@@ -43,9 +43,9 @@ angular.module('starter.controllers', [])
 
 .controller('PlaylistsCtrl', function($scope) {
   $scope.playlists = [
-    { title: 'Exercise', id: 'Exercise' },
-    { title: 'Socialise', id: 'Socialise' },
-    { title: 'Discover', id: 'Discover' }
+    { title: 'Exercise', id: 'Exercise', icon: 'trophy' },
+    { title: 'Socialise', id: 'Socialise', icon: 'beer' },
+    { title: 'Discover', id: 'Discover', icon: 'compass' }
   ];
 })
 
@@ -54,15 +54,19 @@ angular.module('starter.controllers', [])
 
   // Get the map POI types based on the activity
   var poiarray = [];
+  var exerciseActivity, socialiseActivity, discoverActivity = false;
   switch ($scope.playlistId) {
     case "Exercise":
       poiarray = ['bowling_alley','gym','park'];
+      exerciseActivity = true;
       break;
     case "Socialise":
       poiarray = ['bakery','cafe'];
+      socialiseActivity = true;
       break;
     case "Discover":
       poiarray = ['amusement_park','aquarium','art_gallery','library','museum','zoo'];
+      discoverActivity = true;
       break;
   }
 
@@ -100,7 +104,6 @@ angular.module('starter.controllers', [])
         MapsService.getPlacesOfInterest(position, thepoi).then(function(pois) {
           if (pois.data.status != "ZERO_RESULTS") {
             _.each(pois.data.results, function(marker) {
-              console.log(marker.name);
               // Add the marker to the map
               var mapmarker = new google.maps.Marker({
                 position: marker.geometry.location,
@@ -112,19 +115,49 @@ angular.module('starter.controllers', [])
                 }
               });
               // Build the info window
+              var opening_hours = (marker.opening_hours === undefined || marker.opening_hours.open_now === undefined) ? "Possibly closed" : ((marker.opening_hours.open_now == true) ? "Open Now" : "Closed Now");
+              var rating = (marker.rating === undefined) ? "(unknown)" : marker.rating;
               var infowindow = new google.maps.InfoWindow({
                 content:  '<h5>' + marker.name + '</h5>' +
-                          '<em>' + marker.vicinity + '</em>'
+                          '<em>' + marker.vicinity + '</em><br/>' +
+                          '<span>Rating: <strong>' + rating + '</strong></span><br/>' +
+                          '<span>' + opening_hours + '</span>'
               });
               // Click handler for the marker
               mapmarker.addListener('click', function() {
                 infowindow.open($scope.map, mapmarker);
               });
             });
-            console.log(pois);
           }
         });
       });
+
+      // if Socialise activity - pull the local parks
+      if (socialiseActivity) {
+        MapsService.getParkPolygons().then(function(parkPolygons) {
+          var todaysPolygons = parkPolygons.data[new Date().toISOString().split('T')[0]];
+          // Create polygon object
+          _.each(todaysPolygons.geometry.coordinates, function(thePolygon) {
+            var polygonObject = [];
+            _.each(thePolygon[0], function(theCoords) {
+              polygonObject.push({lat: theCoords[0], lng: theCoords[1]});
+            });
+            console.log(polygonObject);
+            // Add it to the map
+            var parkPolygon = new google.maps.Polygon({
+              paths: polygonObject,
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.8,
+              strokeWeight: 2,
+              fillColor: '#FF0000',
+              fillOpacity: 0.35,
+              map: $scope.map
+            });
+            // console.log(parkPolygon);
+            // parkPolygon.setMap($scope.map);
+          });
+        });
+      }
 
       // close the loading window
       $ionicLoading.hide();

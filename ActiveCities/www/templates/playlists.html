@@ -3,6 +3,7 @@
     <ion-list>
       <h3 class="padding text-center">What would you like to do?</h3>
       <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
+        <i class="icon ion-{{playlist.icon}} padding-right"></i>
         {{playlist.title}}
       </ion-item>
     </ion-list>
