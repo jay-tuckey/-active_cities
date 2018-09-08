@@ -1,0 +1,15 @@
+[Unit]
+Description=BOM data
+After=syslog.target
+
+[Service]
+Type=idle
+User=root
+Group=root
+ExecStart=/root/active_cities/bom_processor/run_bom.sh
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
