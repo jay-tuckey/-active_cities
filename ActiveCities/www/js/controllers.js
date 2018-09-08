@@ -49,7 +49,6 @@ angular.module('starter.controllers', [])
   ];
 
   WeatherService.getWeatherFeed().then(function(wxdata) {
-    console.log(wxdata);
     $scope.wxdata = wxdata;
   });
 
@@ -148,7 +147,7 @@ angular.module('starter.controllers', [])
             _.each(thePolygon[0], function(theCoords) {
               polygonObject.push({lat: theCoords[0], lng: theCoords[1]});
             });
-            console.log(polygonObject);
+            // console.log(polygonObject);
             // Add it to the map
             var parkPolygon = new google.maps.Polygon({
               paths: polygonObject,
