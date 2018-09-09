@@ -13,5 +13,5 @@ pyenv activate bom
 
 cd /root/active_cities/bom_processor
 export FLASK_APP=bom
-flask run --host 0.0.0.0 --port 80
+flask run --host 0.0.0.0 --port 81
 
