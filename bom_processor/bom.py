@@ -17,7 +17,7 @@ cache = dict()
 
 def get_cached_result(url: str) -> ET.Element:
     cached_res = cache.get(url, None)
-    if cached_res is None or (datetime.datetime.now().timestamp() - cached_res[1]) > 1800:
+    if cached_res is None or (datetime.datetime.now().timestamp() - cached_res[1]) > 600:
         cache[url] = (get_BOM_xml(url), datetime.datetime.now().timestamp())
         return cache[url][0]
     return cached_res[0]
@@ -56,11 +56,13 @@ def get_bom_mini_forecast() -> dict:
     xmltree = get_cached_result('ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10207.xml')
     current_forecast = [i for i in xmltree[1] if i.attrib['description'] == 'Darwin Airport'][0].getchildren()[0]
 
+    #return current_forecast
+
     outdict = dict()
 
-    outdict['forecast_icon_code'] = current_forecast[0].text
-    outdict['short_forecast'] = current_forecast[1].text
-    outdict['probability_of_precipitation'] = current_forecast[2].text
+    outdict['forecast_icon_code'] = [x for x in current_forecast.getchildren() if x.attrib['type'] == 'forecast_icon_code'][0].text
+    outdict['short_forecast'] = [x for x in current_forecast.getchildren() if x.attrib['type'] == 'precis'][0].text
+    outdict['probability_of_precipitation'] = [x for x in current_forecast.getchildren() if x.attrib['type'] == 'probability_of_precipitation'][0].text
 
     return outdict
 
