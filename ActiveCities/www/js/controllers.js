@@ -58,6 +58,8 @@ angular.module('starter.controllers', [])
   $scope.playlistId = $stateParams.playlistId;
   $scope.freeOnly = false;
 
+
+
   // Get the map POI types based on the activity
   var poiarray = [];
   var markerarray = [];
@@ -110,6 +112,7 @@ angular.module('starter.controllers', [])
     initialiseMap();
   }
 
+
   function initialiseMap() {
     // with this function you can get the user’s current position
     // we use this plugin: https://github.com/apache/cordova-plugin-geolocation/
@@ -160,12 +163,14 @@ angular.module('starter.controllers', [])
           MapsService.getParkPolygons().then(function(parkPolygons) {
             var todaysPolygons = parkPolygons.data[new Date().toISOString().split('T')[0]];
             // Create polygon object
-            _.each(todaysPolygons.geometry.coordinates, function(thePolygon) {
+            _.each(todaysPolygons.geometry
+              .coordinates, function(thePolygon) {
               var polygonObject = [];
               _.each(thePolygon[0], function(theCoords) {
-                polygonObject.push({lat: theCoords[0], lng: theCoords[1]});
+                polygonObject.push({lat: theCoords[1], lng: theCoords[0]});
               });
-              // console.log(polygonObject);
+
+              console.log(polygonObject);
               // Add it to the map
               var parkPolygon = new google.maps.Polygon({
                 paths: polygonObject,
