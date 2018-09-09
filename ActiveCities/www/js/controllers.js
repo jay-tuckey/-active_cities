@@ -2,13 +2,6 @@ angular.module('starter.controllers', [])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
 })
 
 .controller('PlaylistsCtrl', function($scope, WeatherService) {
@@ -49,7 +42,7 @@ angular.module('starter.controllers', [])
       break;
     case "Socialise":
       poiarray = ['bakery','cafe'];
-      scope.optionData.socialiseActivity = true;
+      $scope.optionData.socialiseActivity = true;
       break;
     case "Discover":
       poiarray = ['amusement_park','aquarium','art_gallery','library','museum','zoo'];
@@ -155,7 +148,7 @@ angular.module('starter.controllers', [])
             _.each(todaysPolygons.geometry.coordinates, function(thePolygon) {
               var polygonObject = [];
               _.each(thePolygon[0], function(theCoords) {
-                polygonObject.push({lat: theCoords[0], lng: theCoords[1]});
+                polygonObject.push({lat: theCoords[1], lng: theCoords[0]});
               });
               // console.log(polygonObject);
               // Add it to the map
