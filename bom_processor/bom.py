@@ -71,7 +71,8 @@ def get_bom_long_forecast() -> dict:
     xmltree = get_cached_result('ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10198.xml')
 
     all_forecasts = [x for x in xmltree[1].getchildren() if x.attrib['description'] == "Darwin City and Outer Darwin"][0]
-    forecast = all_forecasts[0][0].text
+    forecastzero = [x for x in all_forecasts.getchildren() if x.attrib['index'] == '0'][0]
+    forecast = [x for x in forecastzero.getchildren() if x.attrib['type'] == 'forecast'][0].text
 
     outdict = dict()
     outdict['long_forecast'] = forecast
