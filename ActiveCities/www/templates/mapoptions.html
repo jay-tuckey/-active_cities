@@ -14,7 +14,7 @@
       </div>
       <ion-checkbox ng-model="optionData.freeOnly">Show me free activities only</ion-checkbox>
       <ion-checkbox ng-show="optionData.discoverActivity" ng-model="optionData.touristActivityOnly">Include tourist activities</ion-checkbox>
-
+      <p class="text-center padding" ng-show="optionData.socialiseActivity"><strong>Tip:</strong> Look for the red highlighted area on your map to see where our popular destination of the day is.  This is the best place to meet people.</p>
       <button class="button button-full button-positive" ng-click="closeOptionsModal()">
         Submit
       </button>
