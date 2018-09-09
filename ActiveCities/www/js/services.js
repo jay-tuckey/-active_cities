@@ -29,7 +29,7 @@ angular.module('starter.services', [])
 })
 
 .service('WeatherService', function($http) {
-  var baseWeatherURL = 'http://172.104.182.108/bom_data';
+  var baseWeatherURL = 'https://bom.jaytuckey.name/bom_data';
 
   _getWeatherFeed = function() {
     return $http.get(baseWeatherURL);
