@@ -122,3 +122,11 @@ def nearby_search():
     r = requests.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', params=request.args )
     pprint(r.url)
     return Response(r.text, mimetype='application/json', headers=[('Access-Control-Allow-Origin', '*')])
+
+
+@app.route('/geocode')
+def geocode():
+    r = requests.get('https://maps.googleapis.com/maps/api/geocode/json', params=request.args )
+    return Response(r.text, mimetype='application/json', headers=[('Access-Control-Allow-Origin', '*')])
+
+
