@@ -1,15 +1,16 @@
-<ion-view view-title="Activities">
+<ion-view view-title="Active Cities">
   <ion-content>
     <ion-list>
-      <h3 class="padding text-center">What would you like to do?</h3>
+      <div class="padding text-center">
+        <h4>Current weather forecast is:</h4>
+        <p class="text-positive"><strong>{{wxdata.data.long_forecast.long_forecast}}</strong></p>
+        <img src="img/{{wxdata.data.mini_forecast.forecast_icon_code}}.png">
+      </div>
+      <h4 class="padding text-center">What would you like to do?</h4>
       <ion-item ng-repeat="playlist in playlists" href="#/app/playlists/{{playlist.id}}">
         <i class="icon ion-{{playlist.icon}} padding-right"></i>
         {{playlist.title}}
       </ion-item>
     </ion-list>
-    <div class="padding text-center">
-      <p>Current weather forecast is:</p><p><strong>{{wxdata.data.long_forecast.long_forecast}}</strong></p>
-      <img src="img/{{wxdata.data.mini_forecast.forecast_icon_code}}.png">
-    </div>
   </ion-content>
 </ion-view>

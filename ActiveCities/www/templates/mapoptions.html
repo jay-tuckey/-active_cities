@@ -1,0 +1,23 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Activity Options</h1>
+  </ion-header-bar>
+  <ion-content>
+    <div class="list padding">
+      <div class="text-center">
+        <img src="img/{{wxdata.data.mini_forecast.forecast_icon_code}}.png">
+      </div>
+      <div ng-show="optionData.rainyDay || optionData.hotDay">
+        <h5 ng-show="optionData.rainDay" class="text-center">Looks like there is a high chance of rain today!</h5>
+        <h5 ng-show="optionData.hotDay" class="text-center">Looks like it is going to be a hot day today!</h5>
+        <ion-checkbox ng-model="optionData.indoorActivityOnly">Show indoor activities only</ion-checkbox>
+      </div>
+      <ion-checkbox ng-model="optionData.freeOnly">Show me free activities only</ion-checkbox>
+      <ion-checkbox ng-show="optionData.discoverActivity" ng-model="optionData.touristActivityOnly">Include tourist activities</ion-checkbox>
+
+      <button class="button button-full button-positive" ng-click="closeOptionsModal()">
+        Submit
+      </button>
+    </div>
+  </ion-content>
+</ion-modal-view>

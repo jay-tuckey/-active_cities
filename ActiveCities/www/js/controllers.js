@@ -9,36 +9,6 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
-  // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
 })
 
 .controller('PlaylistsCtrl', function($scope, WeatherService) {
@@ -54,33 +24,56 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('PlaylistCtrl', function($scope, $stateParams, MapsService, $ionicLoading, $ionicPopup, $ionicHistory) {
+.controller('PlaylistCtrl', function($scope, $stateParams, MapsService, WeatherService, $ionicLoading, $ionicPopup, $ionicHistory, $ionicModal) {
   $scope.playlistId = $stateParams.playlistId;
-  $scope.freeOnly = false;
+
+  $scope.optionData = {
+    freeOnly: false,
+    indoorActivityOnly: false,
+    touristActivityOnly: false,
+    feelingSocial: false,
+    rainyDay: false,
+    hotDay: false,
+    exerciseActivity: false,
+    socialiseActivity: false,
+    discoverActivity: false
+  }
 
   // Get the map POI types based on the activity
   var poiarray = [];
   var markerarray = [];
-  var exerciseActivity, socialiseActivity, discoverActivity = false;
   switch ($scope.playlistId) {
     case "Exercise":
       poiarray = ['bowling_alley','gym','park'];
-      exerciseActivity = true;
+      $scope.optionData.exerciseActivity = true;
       break;
     case "Socialise":
       poiarray = ['bakery','cafe'];
-      socialiseActivity = true;
+      scope.optionData.socialiseActivity = true;
       break;
     case "Discover":
       poiarray = ['amusement_park','aquarium','art_gallery','library','museum','zoo'];
-      discoverActivity = true;
+      $scope.optionData.discoverActivity = true;
       break;
   }
+
+  // get the weather data for the options dialog
+  WeatherService.getWeatherFeed().then(function(wxdata) {
+    $scope.wxdata = wxdata;
+    // work out weather conditions for the options dialog
+    if (parseInt(wxdata.data.mini_forecast.probability_of_precipitation) > 50) {
+      $scope.optionData.rainyDay = true;
+    }
+    if (parseInt(wxdata.data.observation.apparent_temp) > 28) {
+      $scope.optionData.hotDay = true;
+    }
+  });
 
   initialiseMap();
 
   $scope.$on('mapInitialized', function(event, map) {
     $scope.map = map;
+    $scope.openOptionsModal();
   });
 
   // Setup the loader
@@ -99,8 +92,7 @@ angular.module('starter.controllers', [])
       template: 'Loading...'
   });
 
-  $scope.setFreeOnly = function(flag) {
-    $scope.freeOnly = flag;
+  function clearMap() {
     // Clear existing markers
     _.each(markerarray, function(theMarker) {
       theMarker.setMap(null);
@@ -122,7 +114,7 @@ angular.module('starter.controllers', [])
 
         // pull nearby places of interest
         _.each(poiarray, function(thepoi) {
-          MapsService.getPlacesOfInterest(position, thepoi, $scope.freeOnly).then(function(pois) {
+          MapsService.getPlacesOfInterest(position, thepoi, $scope.optionData.freeOnly).then(function(pois) {
             if (pois.data.status != "ZERO_RESULTS") {
               _.each(pois.data.results, function(marker) {
                 // Add the marker to the map
@@ -156,7 +148,7 @@ angular.module('starter.controllers', [])
         });
 
         // if Socialise activity - pull the local parks
-        if (socialiseActivity) {
+        if ($scope.optionData.socialiseActivity) {
           MapsService.getParkPolygons().then(function(parkPolygons) {
             var todaysPolygons = parkPolygons.data[new Date().toISOString().split('T')[0]];
             // Create polygon object
@@ -189,5 +181,37 @@ angular.module('starter.controllers', [])
         $ionicLoading.hide();
     });
   }
+
+
+  $ionicModal.fromTemplateUrl('templates/mapoptions.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+
+  $scope.openOptionsModal = function() {
+    $scope.modal.show();
+  };
+
+  $scope.closeOptionsModal = function() {
+    $scope.modal.hide();
+  };
+
+  // Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.modal.remove();
+  });
+
+  // Execute action on hide modal
+  $scope.$on('modal.hidden', function() {
+    // Execute action
+    clearMap();
+  });
+
+  // Execute action on remove modal
+  $scope.$on('modal.removed', function() {
+    // Execute action
+  });
 
 });

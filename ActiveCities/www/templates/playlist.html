@@ -4,15 +4,9 @@
       <div class="row">
         <div class="col">
           <div class="list">
-            <p class="padding-top text-center">Activity pricing</p>
-            <div ng-show="freeOnly" class="button-bar bar-stable">
-              <a class="button button-small" ng-click="setFreeOnly(false)">All Activities</a>
-              <a class="button button-small button-positive" ng-click="setFreeOnly(true)">Free Only *</a>
-            </div>
-            <div ng-show="!freeOnly" class="button-bar bar-stable">
-              <a class="button button-small button-positive" ng-click="setFreeOnly(false)">All Activities *</a>
-              <a class="button button-small" ng-click="setFreeOnly(true)">Free Only</a>
-            </div>
+            <button class="button button-full button-positive" ng-click="openOptionsModal()">
+              Activity Options
+            </button>
           </div>
         </div>
       </div>
