@@ -56,9 +56,11 @@ angular.module('starter.controllers', [])
 
 .controller('PlaylistCtrl', function($scope, $stateParams, MapsService, $ionicLoading, $ionicPopup, $ionicHistory) {
   $scope.playlistId = $stateParams.playlistId;
+  $scope.freeOnly = false;
 
   // Get the map POI types based on the activity
   var poiarray = [];
+  var markerarray = [];
   var exerciseActivity, socialiseActivity, discoverActivity = false;
   switch ($scope.playlistId) {
     case "Exercise":
@@ -74,6 +76,8 @@ angular.module('starter.controllers', [])
       discoverActivity = true;
       break;
   }
+
+  initialiseMap();
 
   $scope.$on('mapInitialized', function(event, map) {
     $scope.map = map;
@@ -95,80 +99,95 @@ angular.module('starter.controllers', [])
       template: 'Loading...'
   });
 
-  // with this function you can get the user’s current position
-  // we use this plugin: https://github.com/apache/cordova-plugin-geolocation/
-  navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      $scope.current_position = { lat: position.coords.latitude, lng: position.coords.longitude };
-      $scope.center_position = { lat: position.coords.latitude, lng: position.coords.longitude };
-      $scope.my_location = position.coords.latitude + ", " + position.coords.longitude;
-      $scope.map.setCenter(pos);
+  $scope.setFreeOnly = function(flag) {
+    $scope.freeOnly = flag;
+    // Clear existing markers
+    _.each(markerarray, function(theMarker) {
+      theMarker.setMap(null);
+    });
+    markerarray = [];
+    // And rebuild the map with new markers
+    initialiseMap();
+  }
 
-      // pull nearby places of interest
-      _.each(poiarray, function(thepoi) {
-        MapsService.getPlacesOfInterest(position, thepoi).then(function(pois) {
-          if (pois.data.status != "ZERO_RESULTS") {
-            _.each(pois.data.results, function(marker) {
-              // Add the marker to the map
-              var mapmarker = new google.maps.Marker({
-                position: marker.geometry.location,
-                map: $scope.map,
-                title: marker.name,
-                icon: {
-                  url: marker.icon,
-                  scaledSize: new google.maps.Size(20, 20)
-                }
-              });
-              // Build the info window
-              var opening_hours = (marker.opening_hours === undefined || marker.opening_hours.open_now === undefined) ? "Possibly closed" : ((marker.opening_hours.open_now == true) ? "Open Now" : "Closed Now");
-              var rating = (marker.rating === undefined) ? "(unknown)" : marker.rating;
-              var infowindow = new google.maps.InfoWindow({
-                content:  '<h5>' + marker.name + '</h5>' +
-                          '<em>' + marker.vicinity + '</em><br/>' +
-                          '<span>Rating: <strong>' + rating + '</strong></span><br/>' +
-                          '<span>' + opening_hours + '</span>'
-              });
-              // Click handler for the marker
-              mapmarker.addListener('click', function() {
-                infowindow.open($scope.map, mapmarker);
-              });
-            });
-          }
-        });
-      });
+  function initialiseMap() {
+    // with this function you can get the user’s current position
+    // we use this plugin: https://github.com/apache/cordova-plugin-geolocation/
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        $scope.current_position = { lat: position.coords.latitude, lng: position.coords.longitude };
+        $scope.center_position = { lat: position.coords.latitude, lng: position.coords.longitude };
+        $scope.my_location = position.coords.latitude + ", " + position.coords.longitude;
+        $scope.map.setCenter(pos);
 
-      // if Socialise activity - pull the local parks
-      if (socialiseActivity) {
-        MapsService.getParkPolygons().then(function(parkPolygons) {
-          var todaysPolygons = parkPolygons.data[new Date().toISOString().split('T')[0]];
-          // Create polygon object
-          _.each(todaysPolygons.geometry.coordinates, function(thePolygon) {
-            var polygonObject = [];
-            _.each(thePolygon[0], function(theCoords) {
-              polygonObject.push({lat: theCoords[0], lng: theCoords[1]});
-            });
-            // console.log(polygonObject);
-            // Add it to the map
-            var parkPolygon = new google.maps.Polygon({
-              paths: polygonObject,
-              strokeColor: '#FF0000',
-              strokeOpacity: 0.8,
-              strokeWeight: 2,
-              fillColor: '#FF0000',
-              fillOpacity: 0.35,
-              map: $scope.map
-            });
-            // console.log(parkPolygon);
-            // parkPolygon.setMap($scope.map);
+        // pull nearby places of interest
+        _.each(poiarray, function(thepoi) {
+          MapsService.getPlacesOfInterest(position, thepoi, $scope.freeOnly).then(function(pois) {
+            if (pois.data.status != "ZERO_RESULTS") {
+              _.each(pois.data.results, function(marker) {
+                // Add the marker to the map
+                var mapmarker = new google.maps.Marker({
+                  position: marker.geometry.location,
+                  map: $scope.map,
+                  title: marker.name,
+                  icon: {
+                    url: marker.icon,
+                    scaledSize: new google.maps.Size(20, 20)
+                  }
+                });
+                // Add it to the marker array
+                markerarray.push(mapmarker);
+                // Build the info window
+                var opening_hours = (marker.opening_hours === undefined || marker.opening_hours.open_now === undefined) ? "Possibly closed" : ((marker.opening_hours.open_now == true) ? "Open Now" : "Closed Now");
+                var rating = (marker.rating === undefined) ? "(unknown)" : marker.rating;
+                var infowindow = new google.maps.InfoWindow({
+                  content:  '<h5>' + marker.name + '</h5>' +
+                            '<em>' + marker.vicinity + '</em><br/>' +
+                            '<span>Rating: <strong>' + rating + '</strong></span><br/>' +
+                            '<span>' + opening_hours + '</span>'
+                });
+                // Click handler for the marker
+                mapmarker.addListener('click', function() {
+                  infowindow.open($scope.map, mapmarker);
+                });
+              });
+            }
           });
         });
-      }
 
-      // close the loading window
-      $ionicLoading.hide();
-  }, function(err) {
-      // error
-      $ionicLoading.hide();
-  });
+        // if Socialise activity - pull the local parks
+        if (socialiseActivity) {
+          MapsService.getParkPolygons().then(function(parkPolygons) {
+            var todaysPolygons = parkPolygons.data[new Date().toISOString().split('T')[0]];
+            // Create polygon object
+            _.each(todaysPolygons.geometry.coordinates, function(thePolygon) {
+              var polygonObject = [];
+              _.each(thePolygon[0], function(theCoords) {
+                polygonObject.push({lat: theCoords[0], lng: theCoords[1]});
+              });
+              // console.log(polygonObject);
+              // Add it to the map
+              var parkPolygon = new google.maps.Polygon({
+                paths: polygonObject,
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: $scope.map
+              });
+              // console.log(parkPolygon);
+              // parkPolygon.setMap($scope.map);
+            });
+          });
+        }
+
+        // close the loading window
+        $ionicLoading.hide();
+    }, function(err) {
+        // error
+        $ionicLoading.hide();
+    });
+  }
 
 });

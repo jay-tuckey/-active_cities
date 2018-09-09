@@ -5,6 +5,7 @@
     <author email="devan@hrpartner.io" href="http://govhack.org.au/">Active Aces Team</author>
     <content src="index.html" />
     <access origin="*" />
+    <allow-navigation href="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />

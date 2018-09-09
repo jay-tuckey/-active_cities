@@ -5,9 +5,13 @@
         <div class="col">
           <div class="list">
             <p class="padding-top text-center">Activity pricing</p>
-            <div class="button-bar bar-stable">
-              <a class="button button-small">All Activities</a>
-              <a class="button button-small">Free Only</a>
+            <div ng-show="freeOnly" class="button-bar bar-stable">
+              <a class="button button-small" ng-click="setFreeOnly(false)">All Activities</a>
+              <a class="button button-small button-positive" ng-click="setFreeOnly(true)">Free Only *</a>
+            </div>
+            <div ng-show="!freeOnly" class="button-bar bar-stable">
+              <a class="button button-small button-positive" ng-click="setFreeOnly(false)">All Activities *</a>
+              <a class="button button-small" ng-click="setFreeOnly(true)">Free Only</a>
             </div>
           </div>
         </div>

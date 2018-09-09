@@ -10,8 +10,11 @@ angular.module('starter.services', [])
         return $http.get(baseGeoCodingURL + '?address=' + address + '&key=' + GEOCODING_API_KEY);
     };
 
-    _getPlacesOfInterest = function(position, poitype) {
-        return $http.get(baseNearbyPlacesURL + '?location=' + position.coords.latitude + ',' + position.coords.longitude + '&radius=1500&type='+ poitype + '&key=' + GEOCODING_API_KEY)
+    _getPlacesOfInterest = function(position, poitype, freeonly) {
+        var pricequery;
+        (freeonly) ? pricequery = '&maxprice=0' : pricequery = '';
+        console.log(baseNearbyPlacesURL + '?location=' + position.coords.latitude + ',' + position.coords.longitude + '&radius=1500&type='+ poitype + pricequery + '&key=' + GEOCODING_API_KEY);
+        return $http.get(baseNearbyPlacesURL + '?location=' + position.coords.latitude + ',' + position.coords.longitude + '&radius=1500&type='+ poitype + pricequery + '&key=' + GEOCODING_API_KEY);
     }
 
     _getParkPolygons = function() {
