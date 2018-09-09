@@ -3,7 +3,7 @@ angular.module('starter.services', [])
 // Google Maps GeoCoding API
 .service('MapsService', function($http, $q, GEOCODING_API_KEY) {
     var baseGeoCodingURL = 'https://maps.googleapis.com/maps/api/geocode/json';
-    var baseNearbyPlacesURL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+    var baseNearbyPlacesURL = 'https://bom.jaytuckey.name/nearby_search';
     var baseParkPolygonURL = 'https://jay-tuckey.github.io/active_cities/park_selections.json';
 
     _getGeoCoding = function(address) {
