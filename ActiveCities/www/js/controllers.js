@@ -113,9 +113,7 @@ angular.module('starter.controllers', [])
   function initialiseMap() {
     // with this function you can get the user’s current position
     // we use this plugin: https://github.com/apache/cordova-plugin-geolocation/
-    console.log('Getting location...');
     navigator.geolocation.getCurrentPosition(function(position) {
-      console.log('Obtained location');
         var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         $scope.current_position = { lat: position.coords.latitude, lng: position.coords.longitude };
         $scope.center_position = { lat: position.coords.latitude, lng: position.coords.longitude };
@@ -123,11 +121,8 @@ angular.module('starter.controllers', [])
         $scope.map.setCenter(pos);
 
         // pull nearby places of interest
-        console.log('Looping through POIs');
         _.each(poiarray, function(thepoi) {
-          console.log('Getting a POI...');
           MapsService.getPlacesOfInterest(position, thepoi, $scope.freeOnly).then(function(pois) {
-            console.log('Obtained POI...');
             if (pois.data.status != "ZERO_RESULTS") {
               _.each(pois.data.results, function(marker) {
                 // Add the marker to the map
