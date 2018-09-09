@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, Response
+from flask import Flask, Response, request
 import requests
 import requests_ftp
 import xml.etree.ElementTree as ET
@@ -116,4 +116,9 @@ def bom_observations():
 
     return Response(json.dumps(outputdict), mimetype='application/json', headers=[('Access-Control-Allow-Origin', '*')])
 
- 
+@app.route('/nearby_search')
+def nearby_search():
+    pprint(request.headers)
+    r = requests.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', params=request.args )
+    pprint(r.url)
+    return Response(r.text, mimetype='application/json', headers=[('Access-Control-Allow-Origin', '*')])
