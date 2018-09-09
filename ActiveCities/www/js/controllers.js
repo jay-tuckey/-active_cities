@@ -73,7 +73,7 @@ angular.module('starter.controllers', [])
 
   $scope.$on('mapInitialized', function(event, map) {
     $scope.map = map;
-    $scope.openOptionsModal();
+    //$scope.openOptionsModal();
   });
 
   // Setup the loader
